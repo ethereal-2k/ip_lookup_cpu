@@ -1,0 +1,21 @@
+# Ignore compiled objects/binaries in src
+src/*.o
+src/*.out
+src/*.exe
+
+# Ignore generated datasets (but keep scripts, README, etc.)
+data/*.csv
+
+# Ignore benchmark outputs/results (but keep scripts)
+benchmarks/*.csv
+benchmarks/*.log
+
+# Ignore generated plots/images (but keep plotting scripts)
+plots/*.png
+plots/*.jpg
+plots/*.pdf
+plots/*.csv
+
+# Common OS junk
+.DS_Store
+Thumbs.db

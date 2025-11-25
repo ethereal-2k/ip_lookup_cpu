@@ -98,6 +98,19 @@ uint8_t* get_or_create_key(const std::string& hex) {
 
 // ------------------------- Main --------------------------------------
 int main(int argc, char* argv[]) {
+    // Check for -chk flag to output hex keys
+    bool write_hex = false;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-chk" || arg == "--chk") {
+            write_hex = true;
+        } else if (arg == "-h" || arg == "--help") {
+            std::cout << "Usage: " << argv[0] << " [-chk]\n"
+                      << "  -chk   Write hex keys to match file (slower)\n";
+            return 0;
+        }
+    }
+
     // ----------------- Phase 0: Baseline memory -----------------------
     size_t rss_baseline = current_rss_bytes();
 
@@ -152,6 +165,7 @@ int main(int argc, char* argv[]) {
     for (const auto& rec : prefixes) {
         const uint32_t ip_aligned = rec.base_ip;
         const uint8_t len = rec.len;
+        if (len > 32) continue;  // Skip invalid prefix lengths
         uint8_t* key = rec.key;
 
         if (len <= 24) {
@@ -232,7 +246,11 @@ int main(int argc, char* argv[]) {
         } else if (main_table[main_idx]) {
             key = main_table[main_idx];
         }
-        results.emplace_back(key ? /*bytes_to_hex(key)*/ "1" : "-1");
+        if (write_hex) {
+            results.emplace_back(key ? bytes_to_hex(key) : "-1");
+        } else {
+            results.emplace_back(key ? "1" : "-1");
+        }
     }
 
     double lookup_time_s = seconds_since(tD0);

@@ -133,6 +133,7 @@ int main(int argc, char* argv[]){
     for(const auto& rec : prefixes){
         uint32_t net = rec.base;
         uint8_t  len = rec.len;
+        if(len > 32) continue;  // Skip invalid prefix lengths
         uint8_t* key = rec.key;
 
         if(len <= 16){

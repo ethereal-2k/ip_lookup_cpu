@@ -36,10 +36,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Input: prefix table in ../data
-    std::ifstream file("../data/prefix_table.csv");
+    // Input: prefix table in data/
+    std::ifstream file("data/prefix_table.csv");
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open ../data/prefix_table.csv\n";
+        std::cerr << "Error: Could not open data/prefix_table.csv\n";
         return 1;
     }
 
@@ -65,10 +65,10 @@ int main(int argc, char* argv[]) {
         prefix_strings.push_back(prefix_str);
     }
 
-    // Output: generated IPs in ../data
-    std::ofstream out("../data/generated_ips.csv");
+    // Output: generated IPs in data/
+    std::ofstream out("data/generated_ips.csv");
     if (!out.is_open()) {
-        std::cerr << "Error: Could not open ../data/generated_ips.csv for writing\n";
+        std::cerr << "Error: Could not open data/generated_ips.csv for writing\n";
         return 1;
     }
 

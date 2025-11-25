@@ -178,6 +178,7 @@ int main(int argc, char* argv[]) {
         *slash = '\0';
         char* ip_part = prefix_str;
         uint8_t len = (uint8_t)atoi(slash+1);
+        if (len > 32) continue;  // Skip invalid prefix lengths
         uint32_t net;
         inet_pton(AF_INET, ip_part, &net);
         net = ntohl(net) & mask_from_len(len);

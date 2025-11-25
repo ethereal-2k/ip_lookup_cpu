@@ -69,6 +69,7 @@ def verify_matches(match_csv: Path, key2pref, ip2pref, mismatches_out: Path | No
     total = 0
     ok_exact = 0
     ok_more_specific = 0
+    ok_less_specific = 0  # LPM correctly found ancestor when expected prefix not in table
     missing_ip = 0
     missing_key = 0
     mismatches = []
@@ -103,8 +104,18 @@ def verify_matches(match_csv: Path, key2pref, ip2pref, mismatches_out: Path | No
             if matched_pref == exp_pref:
                 ok_exact += 1
             elif is_subnet(matched_pref, exp_pref):
+                # Matched prefix is more specific (longer) than expected - correct!
                 ok_more_specific += 1
+            elif is_subnet(exp_pref, matched_pref):
+                # Matched prefix is less specific (shorter) than expected
+                # This is CORRECT if expected prefix is not in the table (LPM found ancestor)
+                if exp_pref not in all_prefixes:
+                    ok_less_specific += 1
+                else:
+                    # Expected prefix IS in table but algorithm found shorter one - ERROR
+                    mismatches.append((ip, exp_pref, matched_pref))
             else:
+                # No containment relationship - ERROR
                 mismatches.append((ip, exp_pref, matched_pref))
 
     # write mismatches (if any)
@@ -116,12 +127,13 @@ def verify_matches(match_csv: Path, key2pref, ip2pref, mismatches_out: Path | No
             for row in mismatches:
                 w.writerow(row)
 
-    correct = ok_exact + ok_more_specific
+    correct = ok_exact + ok_more_specific + ok_less_specific
     return {
         "total_rows_in_match": total,
         "correct": correct,
         "correct_exact": ok_exact,
         "correct_more_specific": ok_more_specific,
+        "correct_less_specific": ok_less_specific,
         "incorrect": len(mismatches),
         "missing_ip": missing_ip,
         "missing_key_or_no_match": missing_key,

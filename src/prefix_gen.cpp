@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
                   return a.prefix_len > b.prefix_len;
               });
 
-    std::ofstream fout("../data/prefix_table.csv");
+    std::ofstream fout("data/prefix_table.csv");
     fout << "prefix,key\n";
     for (const auto& entry : entries)
         fout << entry.prefix_str << "," << entry.key_hex << "\n";
